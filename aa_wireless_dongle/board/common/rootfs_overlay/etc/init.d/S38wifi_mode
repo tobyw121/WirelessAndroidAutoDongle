@@ -11,6 +11,14 @@ generate_interfaces() {
 	ln -sf /var/run/interfaces /etc/network/interfaces
 }
 
+generate_dnsmasq_conf() {
+	local template="$1"
+	local interface_name="$2"
+
+	sed "s/@WIFI_INTERFACE@/${interface_name}/g" "$template" > /var/run/dnsmasq.conf
+	ln -sf /var/run/dnsmasq.conf /etc/dnsmasq.conf
+}
+
 escape_wpa() {
 	printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g'
 }
@@ -47,6 +55,7 @@ case "$1" in
 		else
 			echo "Configuring wifi access point mode on ${WIFI_INTERFACE}"
 			generate_interfaces /etc/network/interfaces.ap.in "$WIFI_INTERFACE"
+			generate_dnsmasq_conf /etc/dnsmasq.conf.in "$WIFI_INTERFACE"
 		fi
 		;;
 	*)

@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta http-equiv="refresh" content="0; url=/" />
+    <title>Captive Portal</title>
+  </head>
+  <body>
+    <p>Bitte <a href="/">hier klicken</a>, um die Web UI zu öffnen.</p>
+  </body>
+</html>
