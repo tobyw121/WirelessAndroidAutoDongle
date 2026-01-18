@@ -1,0 +1,26 @@
+#!/bin/sh
+#
+# Start configuration web server
+#
+
+case "$1" in
+	start)
+		if [ -z "$AAWG_CONF_SOURCED" ]; then
+			echo "Source /etc/aawgd.conf"
+			source /etc/aawgd.conf
+		fi
+
+		if [ "${AAWG_ENABLE_WEB_UI}" != "1" ]; then
+			echo "Web UI disabled"
+			exit 0
+		fi
+
+		echo "Starting web UI on http://10.0.0.1/"
+		httpd -p 80 -h /www -c /etc/httpd.conf
+		;;
+	*)
+		echo "Usage: $0 {start}"
+		exit 1
+esac
+
+exit $?

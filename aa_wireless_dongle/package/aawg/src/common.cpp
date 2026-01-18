@@ -2,6 +2,7 @@
 #include <cstdarg>
 #include <sstream>
 #include <fstream>
+#include <cctype>
 #include <syslog.h>
 
 #include "common.h"
@@ -32,9 +33,46 @@ std::string Config::getMacAddress(std::string interface) {
     std::ifstream addressFile("/sys/class/net/" + interface + "/address");
 
     std::string macAddress;
+    if (!addressFile.is_open()) {
+        Logger::instance()->info("Unable to read MAC address for interface %s\n", interface.c_str());
+        return "";
+    }
+
     getline(addressFile, macAddress);
 
+    if (macAddress.empty()) {
+        Logger::instance()->info("MAC address for interface %s is empty\n", interface.c_str());
+    }
+
     return macAddress;
+}
+
+std::string Config::getWifiInterface() {
+    return getenv("AAWG_WIFI_INTERFACE", "wlan0");
+}
+
+std::string Config::getFallbackBssid() {
+    std::string suffix = getUniqueSuffix();
+    std::string hexDigits;
+    for (char ch : suffix) {
+        if (std::isxdigit(static_cast<unsigned char>(ch))) {
+            hexDigits.push_back(static_cast<char>(std::tolower(static_cast<unsigned char>(ch))));
+        }
+    }
+
+    if (hexDigits.size() < 6) {
+        hexDigits.insert(hexDigits.begin(), 6 - hexDigits.size(), '0');
+    } else if (hexDigits.size() > 6) {
+        hexDigits = hexDigits.substr(hexDigits.size() - 6);
+    }
+
+    std::string bssid = "02:00:";
+    bssid += hexDigits.substr(0, 2);
+    bssid += ":";
+    bssid += hexDigits.substr(2, 2);
+    bssid += ":";
+    bssid += hexDigits.substr(4, 2);
+    return bssid;
 }
 
 std::string Config::getUniqueSuffix() {
@@ -55,10 +93,20 @@ std::string Config::getUniqueSuffix() {
 }
 
 WifiInfo Config::getWifiInfo() {
+    std::string bssid = getenv("AAWG_WIFI_BSSID", "");
+    if (bssid.empty()) {
+        std::string interface = getWifiInterface();
+        bssid = getMacAddress(interface);
+        if (bssid.empty()) {
+            bssid = getFallbackBssid();
+            Logger::instance()->info("Using fallback BSSID %s\n", bssid.c_str());
+        }
+    }
+
     return {
         getenv("AAWG_WIFI_SSID", "AAWirelessDongle"),
         getenv("AAWG_WIFI_PASSWORD", "ConnectAAWirelessDongle"),
-        getenv("AAWG_WIFI_BSSID", getMacAddress("wlan0")),
+        bssid,
         SecurityMode::WPA2_PERSONAL,
         AccessPointType::DYNAMIC,
         getenv("AAWG_PROXY_IP_ADDRESS", "10.0.0.1"),
