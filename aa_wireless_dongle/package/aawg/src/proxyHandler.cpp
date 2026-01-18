@@ -233,6 +233,7 @@ std::optional<std::thread> AAWProxy::startServer(int32_t port) {
     int opt = 1;
     if (setsockopt(server_sock, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) {
         Logger::instance()->info("setsockopt failed: %s\n", strerror(errno));
+        close(server_sock);
         return std::nullopt;
     }
 
@@ -243,11 +244,13 @@ std::optional<std::thread> AAWProxy::startServer(int32_t port) {
 
     if (bind(server_sock, (struct sockaddr*)&address, sizeof(address)) < 0) {
         Logger::instance()->info("bind failed: %s\n", strerror(errno));
+        close(server_sock);
         return std::nullopt;
     }
 
     if (listen(server_sock, 3) < 0) {
         Logger::instance()->info("listen failed: %s\n", strerror(errno));
+        close(server_sock);
         return std::nullopt;
     }
 

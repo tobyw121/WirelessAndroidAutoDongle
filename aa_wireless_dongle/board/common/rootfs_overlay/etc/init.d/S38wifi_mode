@@ -1,0 +1,57 @@
+#!/bin/sh
+#
+# Configure wifi mode (AP or client) and generate network interfaces
+#
+
+generate_interfaces() {
+	local template="$1"
+	local interface_name="$2"
+
+	sed "s/@WIFI_INTERFACE@/${interface_name}/g" "$template" > /var/run/interfaces
+	ln -sf /var/run/interfaces /etc/network/interfaces
+}
+
+escape_wpa() {
+	printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g'
+}
+
+case "$1" in
+	start)
+		WIFI_MODE="${AAWG_WIFI_MODE:-ap}"
+		WIFI_INTERFACE="${AAWG_WIFI_INTERFACE:-wlan0}"
+
+		if [ "$WIFI_MODE" = "client" ]; then
+			if [ -z "$AAWG_WIFI_CLIENT_SSID" ]; then
+				echo "AAWG_WIFI_CLIENT_SSID not set; falling back to AP mode"
+				WIFI_MODE="ap"
+			fi
+		fi
+
+		if [ "$WIFI_MODE" = "client" ]; then
+			echo "Configuring wifi client mode on ${WIFI_INTERFACE}"
+
+			SSID_ESCAPED="$(escape_wpa "$AAWG_WIFI_CLIENT_SSID")"
+			PSK_ESCAPED="$(escape_wpa "$AAWG_WIFI_CLIENT_PASSWORD")"
+
+			cat > /var/run/wpa_supplicant.conf <<-EOF
+				ctrl_interface=/var/run/wpa_supplicant
+				update_config=0
+				network={
+					ssid="${SSID_ESCAPED}"
+					psk="${PSK_ESCAPED}"
+					key_mgmt=WPA-PSK
+				}
+			EOF
+
+			generate_interfaces /etc/network/interfaces.client.in "$WIFI_INTERFACE"
+		else
+			echo "Configuring wifi access point mode on ${WIFI_INTERFACE}"
+			generate_interfaces /etc/network/interfaces.ap.in "$WIFI_INTERFACE"
+		fi
+		;;
+	*)
+		echo "Usage: $0 {start}"
+		exit 1
+esac
+
+exit $?

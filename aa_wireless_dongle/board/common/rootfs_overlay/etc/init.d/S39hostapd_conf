@@ -10,6 +10,11 @@ case "$1" in
 			source /etc/aawgd.conf
 		fi
 
+		if [ "${AAWG_WIFI_MODE}" = "client" ]; then
+			echo "Skipping hostapd configuration for wifi client mode"
+			exit 0
+		fi
+
 		echo "Generate hostapd configuration at /var/run/hostapd.conf"
 
 		cp /etc/hostapd.conf.in /var/run/hostapd.conf

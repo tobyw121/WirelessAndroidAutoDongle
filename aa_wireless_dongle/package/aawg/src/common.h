@@ -38,6 +38,8 @@ private:
     std::string getenv(std::string name, std::string defaultValue);
 
     std::string getMacAddress(std::string interface);
+    std::string getWifiInterface();
+    std::string getFallbackBssid();
 
     std::optional<ConnectionStrategy> connectionStrategy;
 };
