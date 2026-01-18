@@ -30,6 +30,8 @@ WIFI_INTERFACE="$(decode "$(get_value wifi_interface "$DATA")")"
 COUNTRY_CODE="$(decode "$(get_value country_code "$DATA")")"
 CONNECTION_STRATEGY="$(decode "$(get_value connection_strategy "$DATA")")"
 ENABLE_SSH="$(decode "$(get_value enable_ssh "$DATA")")"
+WEB_UI_BIND="$(decode "$(get_value web_ui_bind "$DATA")")"
+WEB_UI_PORT="$(decode "$(get_value web_ui_port "$DATA")")"
 
 cat > /etc/aawgd.conf <<EOF
 #!/bin/sh
@@ -48,6 +50,8 @@ AAWG_WIFI_INTERFACE=${WIFI_INTERFACE:-wlan0}
 AAWG_WIFI_CLIENT_SSID=${WIFI_CLIENT_SSID}
 AAWG_WIFI_CLIENT_PASSWORD=${WIFI_CLIENT_PASSWORD}
 AAWG_ENABLE_WEB_UI=1
+AAWG_WEB_UI_BIND=${WEB_UI_BIND:-0.0.0.0}
+AAWG_WEB_UI_PORT=${WEB_UI_PORT:-80}
 AAWG_ENABLE_SSH=${ENABLE_SSH:-0}
 EOF
 

@@ -1,5 +1,5 @@
 ctrl_interface=/var/run/hostapd
-interface=wlan0
+interface=@WIFI_INTERFACE@
 
 hw_mode=g
 ieee80211n=1

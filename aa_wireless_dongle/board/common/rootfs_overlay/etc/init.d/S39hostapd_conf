@@ -15,9 +15,12 @@ case "$1" in
 			exit 0
 		fi
 
+		WIFI_INTERFACE="${AAWG_WIFI_INTERFACE:-wlan0}"
+		AP_ADDRESS="10.0.0.1/24"
+
 		echo "Generate hostapd configuration at /var/run/hostapd.conf"
 
-		cp /etc/hostapd.conf.in /var/run/hostapd.conf
+		sed "s/@WIFI_INTERFACE@/${WIFI_INTERFACE}/g" /etc/hostapd.conf.in > /var/run/hostapd.conf
 
 		echo >> /var/run/hostapd.conf
 
@@ -29,6 +32,29 @@ case "$1" in
 		# Add Wifi country code if set
 		if [ -n "${AAWG_COUNTRY_CODE}" ]; then
 			echo "country_code=${AAWG_COUNTRY_CODE}" >> /var/run/hostapd.conf
+		fi
+
+		if command -v ip >/dev/null 2>&1; then
+			ip link set "${WIFI_INTERFACE}" up || true
+			if ! ip addr show dev "${WIFI_INTERFACE}" | grep -q " ${AP_ADDRESS%/*}/"; then
+				ip addr add "${AP_ADDRESS}" dev "${WIFI_INTERFACE}" || true
+			fi
+		elif command -v ifconfig >/dev/null 2>&1; then
+			ifconfig "${WIFI_INTERFACE}" 10.0.0.1 netmask 255.255.255.0 up || true
+		fi
+
+		if [ ! -f /etc/dnsmasq.conf ] && [ -f /etc/dnsmasq.conf.in ]; then
+			sed "s/@WIFI_INTERFACE@/${WIFI_INTERFACE}/g" /etc/dnsmasq.conf.in > /etc/dnsmasq.conf
+		fi
+
+		if command -v hostapd >/dev/null 2>&1; then
+			echo "Starting hostapd on ${WIFI_INTERFACE}"
+			hostapd -B /var/run/hostapd.conf -t -f /var/log/hostapd
+		fi
+
+		if command -v dnsmasq >/dev/null 2>&1; then
+			echo "Starting dnsmasq"
+			dnsmasq -C /etc/dnsmasq.conf
 		fi
 		;;
 	*)

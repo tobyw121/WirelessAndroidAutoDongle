@@ -68,6 +68,7 @@
     <div class="container">
       <h1>AA Wireless Dongle Setup</h1>
       <p>Konfiguriere hier den WLAN‑Modus und weitere Einstellungen. Nach dem Speichern bitte den Dongle neu starten.</p>
+      <p class="note">Nach dem Verbinden mit dem Dongle‑WLAN ist die Web UI normalerweise unter http://10.0.0.1 erreichbar. Bei Captive‑Portal‑Hinweisen einfach den Login‑Dialog öffnen.</p>
       <form method="post" action="/cgi-bin/save_config.cgi">
         <label for="wifi_mode">WLAN Modus</label>
         <select id="wifi_mode" name="wifi_mode">
@@ -102,6 +103,12 @@
           <option value="0" selected>Nein</option>
           <option value="1">Ja</option>
         </select>
+
+        <label for="web_ui_bind">Web UI Bind-Adresse</label>
+        <input id="web_ui_bind" name="web_ui_bind" placeholder="0.0.0.0" />
+
+        <label for="web_ui_port">Web UI HTTP-Port</label>
+        <input id="web_ui_port" name="web_ui_port" type="number" min="1" max="65535" placeholder="80" />
 
         <button type="submit">Speichern</button>
       </form>
