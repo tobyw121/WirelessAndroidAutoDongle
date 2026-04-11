@@ -23,6 +23,8 @@ get_value() {
 DATA="$(read_input)"
 
 WIFI_MODE="$(decode "$(get_value wifi_mode "$DATA")")"
+AP_SSID="$(decode "$(get_value ap_ssid "$DATA")")"
+AP_CHANNEL="$(decode "$(get_value ap_channel "$DATA")")"
 WIFI_CLIENT_SSID="$(decode "$(get_value wifi_client_ssid "$DATA")")"
 WIFI_CLIENT_PASSWORD="$(decode "$(get_value wifi_client_password "$DATA")")"
 WIFI_PASSWORD="$(decode "$(get_value wifi_password "$DATA")")"
@@ -31,12 +33,15 @@ COUNTRY_CODE="$(decode "$(get_value country_code "$DATA")")"
 CONNECTION_STRATEGY="$(decode "$(get_value connection_strategy "$DATA")")"
 ENABLE_SSH="$(decode "$(get_value enable_ssh "$DATA")")"
 
+# Use AP_SSID if provided, otherwise fall back to default
+HOSTAPD_SSID="${AP_SSID:-AAWirelessDongle}"
+
 cat > /etc/aawgd.conf <<EOF
 #!/bin/sh
 
 ######## Configuration options for Android Auto Wireless Dongle ########
 
-AAWG_COUNTRY_CODE=${COUNTRY_CODE:-IN}
+AAWG_COUNTRY_CODE=${COUNTRY_CODE:-DE}
 AAWG_CONNECTION_STRATEGY=${CONNECTION_STRATEGY:-1}
 AAWG_UNIQUE_NAME_SUFFIX=
 
@@ -49,6 +54,8 @@ AAWG_WIFI_CLIENT_SSID=${WIFI_CLIENT_SSID}
 AAWG_WIFI_CLIENT_PASSWORD=${WIFI_CLIENT_PASSWORD}
 AAWG_ENABLE_WEB_UI=1
 AAWG_ENABLE_SSH=${ENABLE_SSH:-0}
+AAWG_HOSTAPD_SSID=${HOSTAPD_SSID}
+AAWG_HOSTAPD_CHANNEL=${AP_CHANNEL:-6}
 EOF
 
 cat <<'HTML'

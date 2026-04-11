@@ -21,9 +21,19 @@ case "$1" in
 
 		echo >> /var/run/hostapd.conf
 
+		# Add Wifi SSID if set
+		if [ -n "${AAWG_HOSTAPD_SSID}" ]; then
+			sed -i "s/^ssid=.*/ssid=${AAWG_HOSTAPD_SSID}/" /var/run/hostapd.conf
+		fi
+
 		# Add Wifi password
 		if [ -n "${AAWG_WIFI_PASSWORD}" ]; then
 			echo "wpa_passphrase=${AAWG_WIFI_PASSWORD}" >> /var/run/hostapd.conf
+		fi
+
+		# Add Wifi channel if set
+		if [ -n "${AAWG_HOSTAPD_CHANNEL}" ]; then
+			sed -i "s/^channel=.*/channel=${AAWG_HOSTAPD_CHANNEL}/" /var/run/hostapd.conf
 		fi
 
 		# Add Wifi country code if set

@@ -7,105 +7,552 @@
     <style>
       :root {
         color-scheme: light dark;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --bg-primary: #0f172a;
+        --bg-secondary: #1e293b;
+        --bg-card: #1e293b;
+        --text-primary: #f1f5f9;
+        --text-secondary: #94a3b8;
+        --accent: #38bdf8;
+        --accent-hover: #0ea5e9;
+        --success: #22c55e;
+        --warning: #f59e0b;
+        --error: #ef4444;
+        --border: rgba(148, 163, 184, 0.2);
       }
+      * { box-sizing: border-box; }
       body {
         margin: 0;
-        padding: 24px;
-        background: #0b1220;
-        color: #f8fafc;
+        padding: 20px;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: var(--text-primary);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        min-height: 100vh;
       }
       .container {
-        max-width: 640px;
+        max-width: 720px;
         margin: 0 auto;
-        background: rgba(15, 23, 42, 0.9);
-        border: 1px solid rgba(148, 163, 184, 0.2);
+      }
+      header {
+        text-align: center;
+        margin-bottom: 32px;
+      }
+      header h1 {
+        margin: 0 0 8px 0;
+        font-size: 28px;
+        background: linear-gradient(135deg, #38bdf8, #818cf8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      header p {
+        margin: 0;
+        color: var(--text-secondary);
+        font-size: 14px;
+      }
+      .card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
         border-radius: 16px;
         padding: 24px;
-        box-shadow: 0 24px 48px rgba(15, 23, 42, 0.35);
+        margin-bottom: 20px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
       }
-      h1 {
-        margin-top: 0;
-        font-size: 24px;
+      .card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border);
       }
-      p {
-        color: #cbd5f5;
-        line-height: 1.5;
+      .card-header h2 {
+        margin: 0;
+        font-size: 18px;
+        flex: 1;
+      }
+      .card-header .icon {
+        width: 32px;
+        height: 32px;
+        background: rgba(56, 189, 248, 0.15);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+      }
+      .form-group {
+        margin-bottom: 16px;
       }
       label {
         display: block;
-        margin-top: 16px;
+        margin-bottom: 6px;
         font-weight: 600;
+        font-size: 14px;
+        color: var(--text-primary);
       }
-      input,
+      .label-hint {
+        font-weight: 400;
+        color: var(--text-secondary);
+        font-size: 12px;
+        margin-left: 6px;
+      }
+      input[type="text"],
+      input[type="password"],
       select {
         width: 100%;
-        padding: 10px 12px;
-        margin-top: 6px;
+        padding: 12px 14px;
         border-radius: 10px;
-        border: 1px solid rgba(148, 163, 184, 0.35);
-        background: rgba(15, 23, 42, 0.8);
-        color: inherit;
+        border: 1px solid var(--border);
+        background: rgba(15, 23, 42, 0.6);
+        color: var(--text-primary);
+        font-size: 14px;
+        transition: border-color 0.2s, box-shadow 0.2s;
       }
-      button {
-        margin-top: 20px;
-        padding: 12px 16px;
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px 20px;
         border-radius: 10px;
         border: none;
-        background: #38bdf8;
-        color: #0b1220;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent), #0ea5e9);
+        color: #0f172a;
+      }
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #0ea5e9, #0284c7);
+        transform: translateY(-1px);
+      }
+      .btn-secondary {
+        background: rgba(148, 163, 184, 0.15);
+        color: var(--text-primary);
+        border: 1px solid var(--border);
+      }
+      .btn-secondary:hover {
+        background: rgba(148, 163, 184, 0.25);
+      }
+      .btn-success {
+        background: linear-gradient(135deg, var(--success), #16a34a);
+        color: white;
+      }
+      .btn-block {
+        width: 100%;
+      }
+      .mode-toggle {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .mode-option {
+        flex: 1;
+        padding: 16px;
+        border-radius: 12px;
+        border: 2px solid var(--border);
+        background: rgba(15, 23, 42, 0.4);
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+      }
+      .mode-option:hover {
+        border-color: var(--accent);
+        background: rgba(56, 189, 248, 0.1);
+      }
+      .mode-option.active {
+        border-color: var(--accent);
+        background: rgba(56, 189, 248, 0.15);
+      }
+      .mode-option .mode-icon {
+        font-size: 28px;
+        margin-bottom: 8px;
+      }
+      .mode-option .mode-title {
         font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .mode-option .mode-desc {
+        font-size: 12px;
+        color: var(--text-secondary);
+      }
+      .network-list {
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        margin-top: 10px;
+        background: rgba(15, 23, 42, 0.4);
+      }
+      .network-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .network-item:last-child {
+        border-bottom: none;
+      }
+      .network-item:hover {
+        background: rgba(56, 189, 248, 0.1);
+      }
+      .network-item.selected {
+        background: rgba(56, 189, 248, 0.2);
+      }
+      .network-name {
+        font-weight: 500;
+      }
+      .network-signal {
+        font-size: 12px;
+        color: var(--text-secondary);
+      }
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .status-badge.success {
+        background: rgba(34, 197, 94, 0.15);
+        color: var(--success);
+      }
+      .status-badge.warning {
+        background: rgba(245, 158, 11, 0.15);
+        color: var(--warning);
+      }
+      .hidden {
+        display: none !important;
+      }
+      .alert {
+        padding: 14px 16px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        font-size: 14px;
+      }
+      .alert-info {
+        background: rgba(56, 189, 248, 0.15);
+        border: 1px solid rgba(56, 189, 248, 0.3);
+        color: var(--accent);
+      }
+      .alert-warning {
+        background: rgba(245, 158, 11, 0.15);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        color: var(--warning);
+      }
+      .alert-success {
+        background: rgba(34, 197, 94, 0.15);
+        border: 1px solid rgba(34, 197, 94, 0.3);
+        color: var(--success);
+      }
+      .row {
+        display: flex;
+        gap: 16px;
+      }
+      .row .col {
+        flex: 1;
+      }
+      .checkbox-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px;
+        background: rgba(15, 23, 42, 0.4);
+        border-radius: 10px;
         cursor: pointer;
       }
-      .note {
-        margin-top: 16px;
-        font-size: 13px;
-        color: #94a3b8;
+      .checkbox-wrapper input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--accent);
+      }
+      .loading {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+      footer {
+        text-align: center;
+        padding: 20px;
+        color: var(--text-secondary);
+        font-size: 12px;
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1>AA Wireless Dongle Setup</h1>
-      <p>Konfiguriere hier den WLAN‑Modus und weitere Einstellungen. Nach dem Speichern bitte den Dongle neu starten.</p>
-      <form method="post" action="/cgi-bin/save_config.cgi">
-        <label for="wifi_mode">WLAN Modus</label>
-        <select id="wifi_mode" name="wifi_mode">
-          <option value="ap">Access Point (Dongle‑WLAN)</option>
-          <option value="client">Client (Hotspot verbinden)</option>
-        </select>
+      <header>
+        <h1>📡 AA Wireless Dongle</h1>
+        <p>Konfiguriere deinen Wireless Android Auto Adapter</p>
+      </header>
 
-        <label for="wifi_ssid">Hotspot SSID (Client‑Modus)</label>
-        <input id="wifi_ssid" name="wifi_client_ssid" placeholder="z. B. Handy-Hotspot" />
+      <form id="configForm" method="post" action="/cgi-bin/save_config.cgi">
+        
+        <!-- WiFi Mode Selection -->
+        <div class="card">
+          <div class="card-header">
+            <div class="icon">📶</div>
+            <h2>WLAN Modus</h2>
+          </div>
+          
+          <div class="mode-toggle">
+            <div class="mode-option active" data-mode="ap" onclick="selectMode('ap')">
+              <div class="mode-icon">🔴</div>
+              <div class="mode-title">Access Point</div>
+              <div class="mode-desc">Dongle erstellt eigenes WLAN</div>
+            </div>
+            <div class="mode-option" data-mode="client" onclick="selectMode('client')">
+              <div class="mode-icon">🔵</div>
+              <div class="mode-title">Client</div>
+              <div class="mode-desc">Mit bestehendem WLAN verbinden</div>
+            </div>
+          </div>
 
-        <label for="wifi_pass">Hotspot Passwort (Client‑Modus)</label>
-        <input id="wifi_pass" name="wifi_client_password" type="password" />
+          <input type="hidden" id="wifi_mode" name="wifi_mode" value="ap" />
+        </div>
 
-        <label for="ap_pass">Dongle‑WLAN Passwort (AP‑Modus)</label>
-        <input id="ap_pass" name="wifi_password" type="password" placeholder="AAAtest!!" />
+        <!-- AP Mode Settings -->
+        <div class="card" id="apSettings">
+          <div class="card-header">
+            <div class="icon">📡</div>
+            <h2>Access Point Einstellungen</h2>
+          </div>
 
-        <label for="wifi_interface">WLAN Interface</label>
-        <input id="wifi_interface" name="wifi_interface" placeholder="wlan0" />
+          <div class="form-group">
+            <label for="ap_ssid">SSID <span class="label-hint">(Name des Netzwerks)</span></label>
+            <input type="text" id="ap_ssid" name="ap_ssid" value="AAWirelessDongle" placeholder="AAWirelessDongle" />
+          </div>
 
-        <label for="country_code">Country Code</label>
-        <input id="country_code" name="country_code" placeholder="DE" />
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="ap_password">Passwort</label>
+                <input type="password" id="ap_password" name="wifi_password" value="AAAtest!!" placeholder="Min. 8 Zeichen" />
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="ap_channel">Kanal</label>
+                <select id="ap_channel" name="ap_channel">
+                  <option value="1">Kanal 1</option>
+                  <option value="2">Kanal 2</option>
+                  <option value="3">Kanal 3</option>
+                  <option value="4">Kanal 4</option>
+                  <option value="5">Kanal 5</option>
+                  <option value="6" selected>Kanal 6</option>
+                  <option value="7">Kanal 7</option>
+                  <option value="8">Kanal 8</option>
+                  <option value="9">Kanal 9</option>
+                  <option value="10">Kanal 10</option>
+                  <option value="11">Kanal 11</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
 
-        <label for="connection_strategy">Connection Strategy</label>
-        <select id="connection_strategy" name="connection_strategy">
-          <option value="0">Dongle mode</option>
-          <option value="1" selected>Phone first</option>
-          <option value="2">USB first</option>
-        </select>
+        <!-- Client Mode Settings -->
+        <div class="card hidden" id="clientSettings">
+          <div class="card-header">
+            <div class="icon">🔗</div>
+            <h2>Mit WLAN verbinden</h2>
+          </div>
 
-        <label for="enable_ssh">SSH aktivieren</label>
-        <select id="enable_ssh" name="enable_ssh">
-          <option value="0" selected>Nein</option>
-          <option value="1">Ja</option>
-        </select>
+          <div class="alert alert-info">
+            💡 Wähle ein verfügbares Netzwerk aus der Liste oder gib manuell SSID und Passwort ein.
+          </div>
 
-        <button type="submit">Speichern</button>
+          <div class="form-group">
+            <button type="button" class="btn btn-secondary" onclick="scanNetworks()">
+              🔄 Netzwerke scannen
+            </button>
+          </div>
+
+          <div id="networkListContainer" class="hidden">
+            <label>Verfügbare Netzwerke</label>
+            <div class="network-list" id="networkList"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="wifi_client_ssid">SSID <span class="label-hint">(manuelle Eingabe)</span></label>
+            <input type="text" id="wifi_client_ssid" name="wifi_client_ssid" placeholder="Netzwerkname" />
+          </div>
+
+          <div class="form-group">
+            <label for="wifi_client_password">Passwort</label>
+            <input type="password" id="wifi_client_password" name="wifi_client_password" placeholder="WLAN Passwort" />
+          </div>
+        </div>
+
+        <!-- Advanced Settings -->
+        <div class="card">
+          <div class="card-header">
+            <div class="icon">⚙️</div>
+            <h2>Erweiterte Einstellungen</h2>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="country_code">Country Code</label>
+                <select id="country_code" name="country_code">
+                  <option value="DE" selected>DE (Deutschland)</option>
+                  <option value="AT">AT (Österreich)</option>
+                  <option value="CH">CH (Schweiz)</option>
+                  <option value="US">US (USA)</option>
+                  <option value="GB">GB (Großbritannien)</option>
+                  <option value="FR">FR (Frankreich)</option>
+                  <option value="IN">IN (Indien)</option>
+                  <option value="JP">JP (Japan)</option>
+                  <option value="AU">AU (Australien)</option>
+                  <option value="CA">CA (Kanada)</option>
+                </select>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="wifi_interface">WLAN Interface</label>
+                <input type="text" id="wifi_interface" name="wifi_interface" value="wlan0" placeholder="wlan0" />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="connection_strategy">Connection Strategy</label>
+            <select id="connection_strategy" name="connection_strategy">
+              <option value="0">Dongle Mode (wartet auf beide Verbindungen)</option>
+              <option value="1" selected>Phone First (Telefon zuerst)</option>
+              <option value="2">USB First (USB zuerst)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-wrapper">
+              <input type="checkbox" id="enable_ssh" name="enable_ssh" value="1" />
+              <span>SSH aktivieren <span class="label-hint">(für Debugging)</span></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Save Button -->
+        <div class="alert alert-warning">
+          ⚠️ Nach dem Speichern muss der Dongle neu gestartet werden, damit die Änderungen wirksam werden.
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">
+          💾 Konfiguration speichern
+        </button>
       </form>
-      <p class="note">Hinweis: Bei Client‑Modus muss der Dongle neu starten, um sich mit dem Hotspot zu verbinden.</p>
+
+      <footer>
+        AA Wireless Dongle WebUI • v2.0
+      </footer>
     </div>
+
+    <script>
+      let selectedNetwork = null;
+
+      function selectMode(mode) {
+        document.getElementById('wifi_mode').value = mode;
+        
+        document.querySelectorAll('.mode-option').forEach(opt => {
+          opt.classList.remove('active');
+        });
+        document.querySelector(`.mode-option[data-mode="${mode}"]`).classList.add('active');
+
+        if (mode === 'ap') {
+          document.getElementById('apSettings').classList.remove('hidden');
+          document.getElementById('clientSettings').classList.add('hidden');
+        } else {
+          document.getElementById('apSettings').classList.add('hidden');
+          document.getElementById('clientSettings').classList.remove('hidden');
+        }
+      }
+
+      function scanNetworks() {
+        const container = document.getElementById('networkListContainer');
+        const list = document.getElementById('networkList');
+        const btn = event.target;
+        
+        btn.innerHTML = '<span class="loading"></span> Scanne...';
+        btn.disabled = true;
+
+        // AJAX call to scan networks
+        fetch('/cgi-bin/scan_networks.cgi?action=scan')
+          .then(response => response.json())
+          .then(data => {
+            if (data.success && data.networks) {
+              list.innerHTML = '';
+              data.networks.forEach(net => {
+                const item = document.createElement('div');
+                item.className = 'network-item';
+                item.onclick = () => selectNetwork(net.ssid, item);
+                item.innerHTML = `
+                  <span class="network-name">${escapeHtml(net.ssid)} ${net.secure ? '🔒' : ''}</span>
+                  <span class="network-signal">${getSignalIcon(net.signal)} ${net.signal} dBm</span>
+                `;
+                list.appendChild(item);
+              });
+              container.classList.remove('hidden');
+            } else {
+              alert('Fehler beim Scannen der Netzwerke');
+            }
+          })
+          .catch(err => {
+            console.error('Scan error:', err);
+            alert('Fehler beim Scannen der Netzwerke');
+          })
+          .finally(() => {
+            btn.innerHTML = '🔄 Erneut scannen';
+            btn.disabled = false;
+          });
+      }
+
+      function selectNetwork(ssid, element) {
+        document.querySelectorAll('.network-item').forEach(item => {
+          item.classList.remove('selected');
+        });
+        element.classList.add('selected');
+        document.getElementById('wifi_client_ssid').value = ssid;
+        selectedNetwork = ssid;
+      }
+
+      function getSignalIcon(signal) {
+        if (signal >= -50) return '📶';
+        if (signal >= -60) return '📶';
+        if (signal >= -70) return '📶';
+        return '📶';
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      // Initialize mode on load
+      selectMode('ap');
+    </script>
   </body>
 </html>
